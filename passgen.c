@@ -35,18 +35,11 @@ static inline void shuffle(char *str) {
 	str[length] = '\0';
 }
 
-static inline int passgen(char *out, const int outlen, const char *in, passgen_mode_t mode) {
+static inline void passgen_random(char *out, const int outlen, const char *shuffled) {
+	memcpy(out, shuffled, outlen);
+}
 
-	int length = strlen(in);	
-	char shuffled[length + 1];
-	strcpy(shuffled, in);
-	for (int i = 0; i < length; ++i) {		
-		shuffle(shuffled);
-	}
-	printf("%s\n", shuffled);
-
-	// memcpy(out, shuffled, outlen - 1);
-
+static inline void passgen_groups(char *out, const int outlen, const char *shuffled) {
 	int idx = 0;
 	for (int i = 0; i < ngroups; i++) {
 		int len = groups[i];
@@ -58,29 +51,54 @@ static inline int passgen(char *out, const int outlen, const char *in, passgen_m
 		out[idx] = separator;
 		idx += 1;
 	}
+}
 
-	out[outlen - 1] = '\0';
+static inline int passgen(char *out, const int outlen, const char *in, passgen_mode_t mode) {
+	int length = strlen(in);	
+	char shuffled[length + 1];
+	strcpy(shuffled, in);
+	for (int i = 0; i < length; ++i) {		
+		shuffle(shuffled);
+	}
+	printf("%s\n", shuffled);
+
+	switch(mode) {
+		case passgen_mode_groups:
+		passgen_groups(out, outlen, shuffled);
+		break;
+
+		case passgen_mode_random:
+		passgen_random(out, outlen, shuffled);
+		break;
+	}
+
+	out[outlen] = '\0';
 
 	return strlen(out);
 }
 
 int main(int argc, char const *argv[])
 {
-
 	passgen_mode_t mode = default_passgen_mode;
+	// mode = passgen_mode_random;
 
-	char in[strlen(pool) + 1];
-	in[strlen(in)] = 0;
+	int length = strlen(pool);
+
+	char in[length + 1];
+	in[length] = 0;
 	strcpy(in, pool);
 
 	printf("%s\n", in);
 
-	int outlen = ngroups;	
-	for (int i = 0; i < ngroups; i++) {
-		outlen += groups[i];
-	}	
-	
-	char out[outlen];	
+	int outlen = length;	 
+	if (mode == passgen_mode_groups) {
+		outlen = ngroups - 1;	
+		for (int i = 0; i < ngroups; i++) {
+			outlen += groups[i];
+		}	
+	}
+
+	char out[outlen + 1];	
 	passgen(out, outlen, in, mode);
 
 	printf("%s\n", out);
