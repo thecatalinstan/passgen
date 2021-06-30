@@ -3,6 +3,13 @@
 #include <string.h>
 #include <time.h>
 
+typedef enum {
+	passgen_mode_groups = 0,
+	passgen_mode_random = 1,
+} passgen_mode_t;
+
+static const passgen_mode_t default_passgen_mode = passgen_mode_groups;
+
 static char const *pool = "abcdefghijklmnoprstuvwxyzABCDEFGHIJKLMNOPRSTUVWXYZ0123456789";//!@#$%^&*()-_=+{}[]'\\\"|,./<>?`";
 static char const separator = '-';
 #define ngroups 6
@@ -28,33 +35,17 @@ static inline void shuffle(char *str) {
 	str[length] = '\0';
 }
 
-int main(int argc, char const *argv[])
-{
-
-	
-
-	char in[strlen(pool) + 1];
-	strcpy(in, pool);
-	in[strlen(in)] = 0;
-	printf("%s\n", in);
+static inline int passgen(char *out, const int outlen, const char *in, passgen_mode_t mode) {
 
 	int length = strlen(in);	
-	char *shuffled = malloc(length + 1);
+	char shuffled[length + 1];
 	strcpy(shuffled, in);
 	for (int i = 0; i < length; ++i) {		
 		shuffle(shuffled);
 	}
-
 	printf("%s\n", shuffled);
 
-	int outlength = ngroups;
-	for (int i = 0; i < ngroups; i++) {
-		outlength += groups[i];
-	}
-
-	char out[outlength];	
-
-	// memcpy(out, shuffled, outlength - 1);
+	// memcpy(out, shuffled, outlen - 1);
 
 	int idx = 0;
 	for (int i = 0; i < ngroups; i++) {
@@ -68,10 +59,30 @@ int main(int argc, char const *argv[])
 		idx += 1;
 	}
 
-	out[outlength - 1] = '\0';
+	out[outlen - 1] = '\0';
+
+	return strlen(out);
+}
+
+int main(int argc, char const *argv[])
+{
+
+	passgen_mode_t mode = default_passgen_mode;
+
+	char in[strlen(pool) + 1];
+	in[strlen(in)] = 0;
+	strcpy(in, pool);
+
+	printf("%s\n", in);
+
+	int outlen = ngroups;	
+	for (int i = 0; i < ngroups; i++) {
+		outlen += groups[i];
+	}	
+	
+	char out[outlen];	
+	passgen(out, outlen, in, mode);
 
 	printf("%s\n", out);
-
-	free(shuffled);
 	return 0;
 }
