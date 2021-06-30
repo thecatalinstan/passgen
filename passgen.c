@@ -4,15 +4,28 @@
 #include <string.h>
 #include <time.h>
 
-static char const *pool = "abcdefghijklmnoprstuvwxyzABCDEFGHIJKLMNOPRSTUVWXYZ0123456789";
-static char const *extpool ="!@#$%^&*()-_=+{}[]'\\\"|,./<>?`";
+static char const *stdpool = "abcdefghijklmnoprstuvwxyzABCDEFGHIJKLMNOPRSTUVWXYZ0123456789";
+static char const *extpool = "!@#$%^&*()-_=+[]{};:'\"\\|,<.>/?`~";
 
 typedef enum {
-	passgen_mode_groups = 0,
-	passgen_mode_random = 1,
+	passgen_mode_none 	= 0,
+	passgen_mode_groups,
+	passgen_mode_random,
+
+	passgen_mode_max,
 } passgen_mode_t;
 
-static const passgen_mode_t default_passgen_mode = passgen_mode_groups;
+typedef struct {
+	passgen_mode_t mode;
+	bool extended;
+	int outlen;
+} passgen_config_t;
+
+static passgen_config_t const default_passgen_config = {
+	.mode = passgen_mode_random,
+	.extended = false,
+	.outlen = 24,
+};
 
 #define ngroups 6
 static int const groups[ngroups] = {4, 3, 4, 4, 3, 4};
@@ -73,6 +86,9 @@ static inline int passgen(char *out, const int outlen, const char *in, passgen_m
 		case passgen_mode_random:
 		passgen_random(out, outlen, shuffled);
 		break;
+
+		default:
+		break;
 	}
 
 	out[outlen] = '\0';
@@ -80,40 +96,50 @@ static inline int passgen(char *out, const int outlen, const char *in, passgen_m
 	return strlen(out);
 }
 
+static inline void parse_args(passgen_config_t *config, int argc, char const *argv[]) {
+	if (config->mode <= passgen_mode_none || config->mode >= passgen_mode_max) {
+		config->mode = default_passgen_config.mode;
+	}
+	config->extended &= config->mode != passgen_mode_groups;
+	switch(config->mode) {
+		case passgen_mode_groups:
+		config->outlen = ngroups - 1;	
+		for (int i = 0; i < ngroups; i++) {
+			config->outlen += groups[i];
+		}	
+		break;
+
+		case passgen_mode_random:
+		break;
+
+		default:
+		break;
+	}
+}
+
 int main(int argc, char const *argv[]) {
-	passgen_mode_t mode = default_passgen_mode;
-	mode = passgen_mode_random;
+	passgen_config_t config = default_passgen_config;	
+	parse_args(&config, argc, argv);	
 
-	bool extended = true;
-	extended &= mode != passgen_mode_groups;
+	int stdpoollength = strlen(stdpool);	
+	int extpoollength = strlen(extpool);	
 
-	int poollength = strlen(pool);	
-	int extpoollength = strlen(pool);	
-	
-	int length = poollength;
-	if (extended) {
-		length += strlen(extpool);
+	int poollength = stdpoollength;
+	if (config.extended) {
+		poollength += extpoollength;
 	}
 
-	char in[length + 1];
-	in[length] = 0;
-	memcpy(in, pool, poollength);
-	if (extended) {
-		memcpy(in + poollength, extpool, extpoollength);
+	char in[poollength + 1];
+	in[poollength] = 0;
+	memcpy(in, stdpool, poollength);
+	if (config.extended) {
+		memcpy(in + stdpoollength, extpool, extpoollength);
 	}	
 
 	printf("%s\n", in);
 
-	int outlen = length;	 
-	if (mode == passgen_mode_groups) {
-		outlen = ngroups - 1;	
-		for (int i = 0; i < ngroups; i++) {
-			outlen += groups[i];
-		}	
-	}
-
-	char out[outlen + 1];	
-	passgen(out, outlen, in, mode);
+	char out[config.outlen + 1];	
+	passgen(out, config.outlen, in, config.mode);
 
 	printf("%s\n", out);
 	return 0;
