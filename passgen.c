@@ -1,7 +1,11 @@
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+
+static char const *pool = "abcdefghijklmnoprstuvwxyzABCDEFGHIJKLMNOPRSTUVWXYZ0123456789";
+static char const *extpool ="!@#$%^&*()-_=+{}[]'\\\"|,./<>?`";
 
 typedef enum {
 	passgen_mode_groups = 0,
@@ -10,10 +14,9 @@ typedef enum {
 
 static const passgen_mode_t default_passgen_mode = passgen_mode_groups;
 
-static char const *pool = "abcdefghijklmnoprstuvwxyzABCDEFGHIJKLMNOPRSTUVWXYZ0123456789";//!@#$%^&*()-_=+{}[]'\\\"|,./<>?`";
-static char const separator = '-';
 #define ngroups 6
 static int const groups[ngroups] = {4, 3, 4, 4, 3, 4};
+static char const separator = '-';
 
 static inline void shuffle(char *str) {
 	static const char marker = '\0';
@@ -77,16 +80,27 @@ static inline int passgen(char *out, const int outlen, const char *in, passgen_m
 	return strlen(out);
 }
 
-int main(int argc, char const *argv[])
-{
+int main(int argc, char const *argv[]) {
 	passgen_mode_t mode = default_passgen_mode;
-	// mode = passgen_mode_random;
+	mode = passgen_mode_random;
 
-	int length = strlen(pool);
+	bool extended = true;
+	extended &= mode != passgen_mode_groups;
+
+	int poollength = strlen(pool);	
+	int extpoollength = strlen(pool);	
+	
+	int length = poollength;
+	if (extended) {
+		length += strlen(extpool);
+	}
 
 	char in[length + 1];
 	in[length] = 0;
-	strcpy(in, pool);
+	memcpy(in, pool, poollength);
+	if (extended) {
+		memcpy(in + poollength, extpool, extpoollength);
+	}	
 
 	printf("%s\n", in);
 
