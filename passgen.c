@@ -1,8 +1,12 @@
+#include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+
+#define MAX(a,b) ((a) > (b) ? (a) : (b))
+#define MIN(a,b) ((a) < (b) ? (a) : (b))
 
 static char const *stdpool = "abcdefghijklmnoprstuvwxyzABCDEFGHIJKLMNOPRSTUVWXYZ0123456789";
 static char const *extpool = "!@#$%^&*()-_=+[]{};:'\"\\|,<.>/?`~";
@@ -24,7 +28,7 @@ typedef struct {
 static passgen_config_t const default_passgen_config = {
 	.mode = passgen_mode_random,
 	.extended = false,
-	.outlen = 24,
+	.outlen = 100,
 };
 
 #define ngroups 6
@@ -35,20 +39,18 @@ static inline void shuffle(char *str) {
 	static const char marker = '\0';
 	int length = strlen(str);
 
-	srand(time(NULL) * length + 119810710134500);
-
 	char temp[length];
 	strcpy(temp, str);
 	for (int i = 0; i < length; i++) {            
 		int key;
 		do {
 			key = rand() % length;
+			// key = arc4random_uniform(length);
 		} while (temp[key] == marker);
 		str[i] = temp[key];
 		temp[key] = marker;		
 	}
 
-	str[length] = '\0';
 }
 
 static inline void passgen_random(char *out, const int outlen, const char *shuffled) {
@@ -76,7 +78,6 @@ static inline int passgen(char *out, const int outlen, const char *in, passgen_m
 	for (int i = 0; i < length; ++i) {		
 		shuffle(shuffled);
 	}
-	printf("%s\n", shuffled);
 
 	switch(mode) {
 		case passgen_mode_groups:
@@ -100,20 +101,13 @@ static inline void parse_args(passgen_config_t *config, int argc, char const *ar
 	if (config->mode <= passgen_mode_none || config->mode >= passgen_mode_max) {
 		config->mode = default_passgen_config.mode;
 	}
-	config->extended &= config->mode != passgen_mode_groups;
-	switch(config->mode) {
-		case passgen_mode_groups:
+
+	if(config->mode == passgen_mode_groups) {
+		config->extended = false;
 		config->outlen = ngroups - 1;	
 		for (int i = 0; i < ngroups; i++) {
 			config->outlen += groups[i];
 		}	
-		break;
-
-		case passgen_mode_random:
-		break;
-
-		default:
-		break;
 	}
 }
 
@@ -136,11 +130,23 @@ int main(int argc, char const *argv[]) {
 		memcpy(in + stdpoollength, extpool, extpoollength);
 	}	
 
-	printf("%s\n", in);
+	srand(time(NULL) * poollength + 119810710134500);
 
 	char out[config.outlen + 1];	
-	passgen(out, config.outlen, in, config.mode);
+	out[config.outlen] = 0;
+	int total = 0, generated = 0;
+	do {
+		char temp[poollength + 1];
+		generated = passgen(temp, poollength, in, config.mode);
+		int count = MIN(generated, config.outlen - total);
+		memcpy(out + total, temp, count);
+		total += count;
+	} while (total < config.outlen);
+	
+	if (config.outlen != total) {
+		fprintf(stderr, "error: expected %d chars, found %d\n", config.outlen, (int)strlen(out));
+	}
 
-	printf("%s\n", out);
+	fprintf(stderr, "%s\n", out);
 	return 0;
 }
