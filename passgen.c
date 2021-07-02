@@ -12,7 +12,7 @@ static char const *stdpool = "abcdefghijklmnoprstuvwxyzABCDEFGHIJKLMNOPRSTUVWXYZ
 static char const *extpool = "!@#$%^&*()-_=+[]{};:'\"\\|,<.>/?`~";
 
 #define ngroups 6
-static int const groups[ngroups] = {4, 3, 4, 4, 3, 4};
+static size_t const groups[ngroups] = {4, 3, 4, 4, 3, 4};
 
 typedef enum {
 	passgen_mode_none 	= 0,
@@ -24,7 +24,7 @@ typedef enum {
 
 typedef struct {
 	passgen_mode_t mode;
-	int count;
+	size_t count;
 	bool extended;
 } passgen_config_t;
 
@@ -34,8 +34,8 @@ static passgen_config_t const default_passgen_config = {
 	.count = ngroups,
 };
 
-static inline int outlen(passgen_mode_t mode, int count) {
-	int res = 0;
+static inline size_t outlen(passgen_mode_t mode, size_t count) {
+	size_t res = 0;
 	switch (mode) {
 		case passgen_mode_random:
 		res = count;
@@ -43,7 +43,7 @@ static inline int outlen(passgen_mode_t mode, int count) {
 
 		case passgen_mode_groups: {
 			res = count - 1;
-			for (int i = 0; i < count; i++) {
+			for (size_t i = 0; i < count; i++) {
 				res += groups[i % ngroups];
 			}
 		}
@@ -58,12 +58,12 @@ static inline int outlen(passgen_mode_t mode, int count) {
 
 static inline void strshuffle(char *str) {
 	static const char marker = '\0';
-	int length = strlen(str);
+	size_t length = strlen(str);
 
 	char temp[length];
 	strcpy(temp, str);
-	for (int i = 0; i < length; i++) {            
-		int key;
+	for (size_t i = 0; i < length; i++) {
+		size_t key;
 		do {
 			key = rand() % length;
 		} while (temp[key] == marker);
@@ -72,17 +72,17 @@ static inline void strshuffle(char *str) {
 	}
 }
 
-static inline void reshuffle_pool(char *pool, int poollen) {
-    for (int i = 0; i < poollen; i++) {
+static inline void reshuffle_pool(char *pool, size_t poollen) {
+    for (size_t i = 0; i < poollen; i++) {
         strshuffle(pool);
     }
 }
 
-static inline int passgen_random(char *out, const int count, char *pool, const int poollen) {
-    int offset = 0;
+static inline size_t passgen_random(char *out, const size_t count, char *pool, const size_t poollen) {
+    size_t offset = 0;
     do {
         reshuffle_pool(pool, poollen);
-        int num = MIN(poollen, count - offset);
+        size_t num = MIN(poollen, count - offset);
         memcpy(out + offset, pool, num);
         offset += num;
     } while (offset < count);
@@ -90,14 +90,14 @@ static inline int passgen_random(char *out, const int count, char *pool, const i
     return offset;
 }
 
-static inline int passgen_groups(char *out, const int count, char *pool, const int poollen) {
+static inline size_t passgen_groups(char *out, const size_t count, char *pool, const size_t poollen) {
 	static char const separator = '-';
     
     reshuffle_pool(pool, poollen);
 
-	int offset = 0, pooloffset = 0;
-	for (int i = 0; i < count; i++) {
-		int grouplen = groups[i % ngroups];
+	size_t offset = 0, pooloffset = 0;
+	for (size_t i = 0; i < count; i++) {
+		size_t grouplen = groups[i % ngroups];
         if (pooloffset + grouplen > poollen) {
             reshuffle_pool(pool, poollen);
             pooloffset = 0;
@@ -133,10 +133,10 @@ int main(int argc, char const *argv[]) {
 	passgen_config_t config = default_passgen_config;	
 	parse_args(&config, argc, argv);	
 
-	int stdpoollength = strlen(stdpool);	
-	int extpoollength = strlen(extpool);	
+	size_t stdpoollength = strlen(stdpool);
+	size_t extpoollength = strlen(extpool);
 
-	int poollength = stdpoollength;
+	size_t poollength = stdpoollength;
 	if (config.extended) {
 		poollength += extpoollength;
 	}
@@ -148,11 +148,11 @@ int main(int argc, char const *argv[]) {
 		memcpy(pool + stdpoollength, extpool, extpoollength);
 	}
     
-	int len = outlen(config.mode, config.count);
+	size_t len = outlen(config.mode, config.count);
 	char out[len + 1];	
 	out[len] = 0;
     
-    int res = 0;
+    size_t res = 0;
         
     switch(config.mode) {
         case passgen_mode_groups:
@@ -170,7 +170,7 @@ int main(int argc, char const *argv[]) {
     fprintf(stdout, "%s\n", out);
 
     if (res != len) {
-        fprintf(stderr, "error: expected %d chars, found %d\n", len, res);
+        fprintf(stderr, "error: expected %zu chars, found %zu\n", len, res);
         return EXIT_FAILURE;
     }
 
@@ -180,5 +180,5 @@ int main(int argc, char const *argv[]) {
 
 __attribute__((constructor))
 void init(void) {
-    srand(time(NULL) * 201906270400  + 19810710134500);
+    srand((unsigned)(time(NULL) * 201906270400  + 19810710134500));
 }
