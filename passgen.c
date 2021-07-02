@@ -61,7 +61,7 @@ static inline void strshuffle(char *str) {
 	size_t length = strlen(str);
 
 	char temp[length];
-	strcpy(temp, str);
+	memcpy(temp, str, length);
 	for (size_t i = 0; i < length; i++) {
 		size_t key;
 		do {
