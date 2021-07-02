@@ -14,6 +14,9 @@ static char const *extpool = "!@#$%^&*()-_=+[]{};:'\"\\|,<.>/?`~";
 #define ngroups 6
 static size_t const groups[ngroups] = {4, 3, 4, 4, 3, 4};
 
+//size_t outlen(passgen_mode_t mode, size_t count)
+//size_t passgen_random(char *out, const size_t count, char *pool, const size_t poollen) {
+    
 typedef enum {
 	passgen_mode_none 	= 0,
 	passgen_mode_groups,
