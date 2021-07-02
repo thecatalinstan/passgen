@@ -11,6 +11,9 @@
 static char const *stdpool = "abcdefghijklmnoprstuvwxyzABCDEFGHIJKLMNOPRSTUVWXYZ0123456789";
 static char const *extpool = "!@#$%^&*()-_=+[]{};:'\"\\|,<.>/?`~";
 
+#define ngroups 6
+static int const groups[ngroups] = {4, 3, 4, 4, 3, 4};
+
 typedef enum {
 	passgen_mode_none 	= 0,
 	passgen_mode_groups,
@@ -21,21 +24,39 @@ typedef enum {
 
 typedef struct {
 	passgen_mode_t mode;
+	int count;
 	bool extended;
-	int outlen;
 } passgen_config_t;
 
 static passgen_config_t const default_passgen_config = {
 	.mode = passgen_mode_random,
 	.extended = false,
-	.outlen = 100,
+	.count = 124,
 };
 
-#define ngroups 6
-static int const groups[ngroups] = {4, 3, 4, 4, 3, 4};
-static char const separator = '-';
+static inline int outlen(passgen_mode_t mode, int count) {
+	int res = 0;
+	switch (mode) {
+		case passgen_mode_random:
+		res = count;
+		break;
 
-static inline void shuffle(char *str) {
+		case passgen_mode_groups: {
+			res = count - 1;
+			for (int i = 0; i < count; i++) {
+				res += groups[i % ngroups];
+			}
+		}
+		break;
+
+		default:
+		break;
+	}
+	
+	return res;
+}
+
+static inline void strshuffle(char *str) {
 	static const char marker = '\0';
 	int length = strlen(str);
 
@@ -45,57 +66,51 @@ static inline void shuffle(char *str) {
 		int key;
 		do {
 			key = rand() % length;
-			// key = arc4random_uniform(length);
 		} while (temp[key] == marker);
 		str[i] = temp[key];
 		temp[key] = marker;		
 	}
-
 }
 
-static inline void passgen_random(char *out, const int outlen, const char *shuffled) {
-	memcpy(out, shuffled, outlen);
+static inline int passgen_random(char *out, const int count, char *pool, const int poollen) {
+    int total = 0;
+    do {
+        for (int i = 0; i < poollen; i++) {
+            strshuffle(pool);
+        }
+        fprintf(stderr, " *** shf: %s\n", pool);
+        int num = MIN(poollen, count - total);
+        memcpy(out + total, pool, num);
+        total += num;
+    } while (total < count);
+    
+    return total;
 }
 
-static inline void passgen_groups(char *out, const int outlen, const char *shuffled) {
-	int idx = 0;
-	for (int i = 0; i < ngroups; i++) {
-		int len = groups[i];
-		memcpy(out + idx, shuffled + idx, len);
-		idx += len;
-		if (i == ngroups - 1) {
-			continue;
-		}
-		out[idx] = separator;
-		idx += 1;
-	}
-}
-
-static inline int passgen(char *out, const int outlen, const char *in, passgen_mode_t mode) {
-	int length = strlen(in);	
-	char shuffled[length + 1];
-	strcpy(shuffled, in);
-	for (int i = 0; i < length; ++i) {		
-		shuffle(shuffled);
-	}
-
-	switch(mode) {
-		case passgen_mode_groups:
-		passgen_groups(out, outlen, shuffled);
-		break;
-
-		case passgen_mode_random:
-		passgen_random(out, outlen, shuffled);
-		break;
-
-		default:
-		break;
-	}
-
-	out[outlen] = '\0';
-
-	return strlen(out);
-}
+//static inline int passgen_groups(char *out, const int len, const int count, const char *in) {
+//    int length = strlen(in);
+//    char shuffled[length + 1];
+//    strcpy(shuffled, in);
+//    for (int i = 0; i < length; ++i) {
+//        strshuffle(shuffled);
+//    }
+//
+//	static char const separator = '-';
+//    int poollen = strlen(shuffled);
+//
+//	int idx = 0;
+//	for (int i = 0; i < count; i++) {
+//		int len = groups[i % ngroups];
+//		memcpy(out + idx, shuffled + (idx % poollen), len);
+//		idx += len;
+//		if (i == count - 1) {
+//			continue;
+//		}
+//		out[idx] = separator;
+//		idx += 1;
+//	}
+//	out[idx] = '\0';
+//}
 
 static inline void parse_args(passgen_config_t *config, int argc, char const *argv[]) {
 	if (config->mode <= passgen_mode_none || config->mode >= passgen_mode_max) {
@@ -104,10 +119,6 @@ static inline void parse_args(passgen_config_t *config, int argc, char const *ar
 
 	if(config->mode == passgen_mode_groups) {
 		config->extended = false;
-		config->outlen = ngroups - 1;	
-		for (int i = 0; i < ngroups; i++) {
-			config->outlen += groups[i];
-		}	
 	}
 }
 
@@ -123,30 +134,42 @@ int main(int argc, char const *argv[]) {
 		poollength += extpoollength;
 	}
 
-	char in[poollength + 1];
-	in[poollength] = 0;
-	memcpy(in, stdpool, poollength);
+	char pool[poollength + 1];
+	pool[poollength] = 0;
+	memcpy(pool, stdpool, poollength);
 	if (config.extended) {
-		memcpy(in + stdpoollength, extpool, extpoollength);
-	}	
-
-	srand(time(NULL) * poollength + 119810710134500);
-
-	char out[config.outlen + 1];	
-	out[config.outlen] = 0;
-	int total = 0, generated = 0;
-	do {
-		char temp[poollength + 1];
-		generated = passgen(temp, poollength, in, config.mode);
-		int count = MIN(generated, config.outlen - total);
-		memcpy(out + total, temp, count);
-		total += count;
-	} while (total < config.outlen);
-	
-	if (config.outlen != total) {
-		fprintf(stderr, "error: expected %d chars, found %d\n", config.outlen, (int)strlen(out));
+		memcpy(pool + stdpoollength, extpool, extpoollength);
 	}
+    
+	int len = outlen(config.mode, config.count);
+	char out[len + 1];	
+	out[len] = 0;
+    
+    int res = 0;
+        
+    switch(config.mode) {
+        case passgen_mode_groups:
+//            res = passgen_groups(out, config.count, in);
+            break;
+            
+        case passgen_mode_random:
+            res = passgen_random(out, config.count, pool, poollength);
+            break;
+            
+        default:
+            break;
+    }
 
-	fprintf(stderr, "%s\n", out);
-	return 0;
+    if (res != len) {
+        fprintf(stderr, "error: expected %d chars, found %d\n", len, res);
+        return EXIT_FAILURE;
+    }
+
+    fprintf(stdout, "%s\n", out);
+	return EXIT_SUCCESS;
+}
+
+__attribute__((constructor))
+void init(void) {
+    srand(time(NULL) * 201906270400  + 19810710134500);
 }
