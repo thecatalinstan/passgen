@@ -29,9 +29,9 @@ typedef struct {
 } passgen_config_t;
 
 static passgen_config_t const default_passgen_config = {
-	.mode = passgen_mode_random,
+	.mode = passgen_mode_groups,
 	.extended = false,
-	.count = 124,
+	.count = ngroups,
 };
 
 static inline int outlen(passgen_mode_t mode, int count) {
@@ -72,45 +72,52 @@ static inline void strshuffle(char *str) {
 	}
 }
 
-static inline int passgen_random(char *out, const int count, char *pool, const int poollen) {
-    int total = 0;
-    do {
-        for (int i = 0; i < poollen; i++) {
-            strshuffle(pool);
-        }
-        fprintf(stderr, " *** shf: %s\n", pool);
-        int num = MIN(poollen, count - total);
-        memcpy(out + total, pool, num);
-        total += num;
-    } while (total < count);
-    
-    return total;
+static inline void reshuffle_pool(char *pool, int poollen) {
+    for (int i = 0; i < poollen; i++) {
+        strshuffle(pool);
+    }
 }
 
-//static inline int passgen_groups(char *out, const int len, const int count, const char *in) {
-//    int length = strlen(in);
-//    char shuffled[length + 1];
-//    strcpy(shuffled, in);
-//    for (int i = 0; i < length; ++i) {
-//        strshuffle(shuffled);
-//    }
-//
-//	static char const separator = '-';
-//    int poollen = strlen(shuffled);
-//
-//	int idx = 0;
-//	for (int i = 0; i < count; i++) {
-//		int len = groups[i % ngroups];
-//		memcpy(out + idx, shuffled + (idx % poollen), len);
-//		idx += len;
-//		if (i == count - 1) {
-//			continue;
-//		}
-//		out[idx] = separator;
-//		idx += 1;
-//	}
-//	out[idx] = '\0';
-//}
+static inline int passgen_random(char *out, const int count, char *pool, const int poollen) {
+    int offset = 0;
+    do {
+        reshuffle_pool(pool, poollen);
+        int num = MIN(poollen, count - offset);
+        memcpy(out + offset, pool, num);
+        offset += num;
+    } while (offset < count);
+    
+    return offset;
+}
+
+static inline int passgen_groups(char *out, const int count, char *pool, const int poollen) {
+	static char const separator = '-';
+    
+    reshuffle_pool(pool, poollen);
+
+	int offset = 0, pooloffset = 0;
+	for (int i = 0; i < count; i++) {
+		int grouplen = groups[i % ngroups];
+        if (pooloffset + grouplen > poollen) {
+            reshuffle_pool(pool, poollen);
+            pooloffset = 0;
+        }
+        
+		memcpy(out + offset, pool + pooloffset, grouplen);
+        
+        pooloffset += grouplen;
+		offset += grouplen;
+        
+		if (i == count - 1) {
+			continue;
+		}
+        
+		out[offset] = separator;
+		offset += 1;
+	}
+    
+    return offset;
+}
 
 static inline void parse_args(passgen_config_t *config, int argc, char const *argv[]) {
 	if (config->mode <= passgen_mode_none || config->mode >= passgen_mode_max) {
@@ -149,7 +156,7 @@ int main(int argc, char const *argv[]) {
         
     switch(config.mode) {
         case passgen_mode_groups:
-//            res = passgen_groups(out, config.count, in);
+            res = passgen_groups(out, config.count, pool, poollength);
             break;
             
         case passgen_mode_random:
@@ -159,13 +166,15 @@ int main(int argc, char const *argv[]) {
         default:
             break;
     }
+    
+    fprintf(stdout, "%s\n", out);
 
     if (res != len) {
         fprintf(stderr, "error: expected %d chars, found %d\n", len, res);
         return EXIT_FAILURE;
     }
 
-    fprintf(stdout, "%s\n", out);
+//    fprintf(stdout, "%s\n", out);
 	return EXIT_SUCCESS;
 }
 
