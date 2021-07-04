@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "ADDC7CB72690A5840048078A"
-               BuildableName = "passgen (tool)"
+               BuildableName = "passgen"
                BlueprintName = "passgen (tool)"
                ReferencedContainer = "container:passgen.xcodeproj">
             </BuildableReference>
@@ -45,7 +45,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "ADDC7CB72690A5840048078A"
-            BuildableName = "passgen (tool)"
+            BuildableName = "passgen"
             BlueprintName = "passgen (tool)"
             ReferencedContainer = "container:passgen.xcodeproj">
          </BuildableReference>
@@ -61,7 +61,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "ADDC7CB72690A5840048078A"
-            BuildableName = "passgen (tool)"
+            BuildableName = "passgen"
             BlueprintName = "passgen (tool)"
             ReferencedContainer = "container:passgen.xcodeproj">
          </BuildableReference>

@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "ADF67C652691B96B002DDFA2"
-               BuildableName = "libpassgen (lib).dylib"
+               BuildableName = "libpassgen.dylib"
                BlueprintName = "passgen (lib)"
                ReferencedContainer = "container:passgen.xcodeproj">
             </BuildableReference>
@@ -51,7 +51,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "ADF67C652691B96B002DDFA2"
-            BuildableName = "libpassgen (lib).dylib"
+            BuildableName = "libpassgen.dylib"
             BlueprintName = "passgen (lib)"
             ReferencedContainer = "container:passgen.xcodeproj">
          </BuildableReference>

@@ -1,4 +1,4 @@
-#ifndef _PASSGEN_H_
-#define _PASSGEN_H_
+#ifndef _passgen_h_
+#define _passgen_h_
 
 #endif
