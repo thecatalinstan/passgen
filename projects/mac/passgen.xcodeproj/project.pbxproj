@@ -8,7 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		AD994D6E2691C94100BB79AE /* passgen_groups.c in Sources */ = {isa = PBXBuildFile; fileRef = AD994D6C2691C93A00BB79AE /* passgen_groups.c */; };
-		AD994D6F2691C94600BB79AE /* passgen_groups.h in Headers */ = {isa = PBXBuildFile; fileRef = AD994D6B2691C93A00BB79AE /* passgen_groups.h */; };
+		AD994D722691D26900BB79AE /* shuffle.h in Headers */ = {isa = PBXBuildFile; fileRef = AD994D702691D26900BB79AE /* shuffle.h */; };
+		AD994D732691D26900BB79AE /* shuffle.c in Sources */ = {isa = PBXBuildFile; fileRef = AD994D712691D26900BB79AE /* shuffle.c */; };
+		AD994D752691D30E00BB79AE /* passgen_random.c in Sources */ = {isa = PBXBuildFile; fileRef = AD994D742691D30E00BB79AE /* passgen_random.c */; };
 		ADDC7CCA2690A5B20048078A /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = ADDC7CC42690A5B20048078A /* main.c */; };
 		ADF67C6A2691BB9F002DDFA2 /* passgen.h in Headers */ = {isa = PBXBuildFile; fileRef = ADDC7CCC2690A8750048078A /* passgen.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		ADF67C6C2691BC34002DDFA2 /* libpassgen.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = ADF67C662691B96B002DDFA2 /* libpassgen.dylib */; };
@@ -38,8 +40,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		AD994D6B2691C93A00BB79AE /* passgen_groups.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = passgen_groups.h; sourceTree = "<group>"; };
 		AD994D6C2691C93A00BB79AE /* passgen_groups.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = passgen_groups.c; sourceTree = "<group>"; };
+		AD994D702691D26900BB79AE /* shuffle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = shuffle.h; sourceTree = "<group>"; };
+		AD994D712691D26900BB79AE /* shuffle.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = shuffle.c; sourceTree = "<group>"; };
+		AD994D742691D30E00BB79AE /* passgen_random.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = passgen_random.c; sourceTree = "<group>"; };
 		ADDC7CB82690A5840048078A /* passgen */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = passgen; sourceTree = BUILT_PRODUCTS_DIR; };
 		ADDC7CC42690A5B20048078A /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		ADDC7CCC2690A8750048078A /* passgen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = passgen.h; sourceTree = "<group>"; };
@@ -89,9 +93,11 @@
 			isa = PBXGroup;
 			children = (
 				ADDC7CC42690A5B20048078A /* main.c */,
+				AD994D702691D26900BB79AE /* shuffle.h */,
+				AD994D712691D26900BB79AE /* shuffle.c */,
 				ADDC7CCD2690A87F0048078A /* passgen.c */,
-				AD994D6B2691C93A00BB79AE /* passgen_groups.h */,
 				AD994D6C2691C93A00BB79AE /* passgen_groups.c */,
+				AD994D742691D30E00BB79AE /* passgen_random.c */,
 			);
 			name = src;
 			path = ../../src;
@@ -120,7 +126,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AD994D6F2691C94600BB79AE /* passgen_groups.h in Headers */,
+				AD994D722691D26900BB79AE /* shuffle.h in Headers */,
 				ADF67C6A2691BB9F002DDFA2 /* passgen.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -212,6 +218,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				ADF67C6F2691BC7D002DDFA2 /* passgen.c in Sources */,
+				AD994D732691D26900BB79AE /* shuffle.c in Sources */,
+				AD994D752691D30E00BB79AE /* passgen_random.c in Sources */,
 				AD994D6E2691C94100BB79AE /* passgen_groups.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
