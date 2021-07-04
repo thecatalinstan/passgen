@@ -1,9 +1,9 @@
-#include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
+
+#include <passgen.h>
 
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
 #define MIN(a,b) ((a) < (b) ? (a) : (b))
@@ -133,7 +133,7 @@ static inline void parse_args(passgen_config_t *config, int argc, char const *ar
 }
 
 int main(int argc, char const *argv[]) {
-	passgen_config_t config = default_passgen_config;	
+	passgen_config_t config = default_passgen_config;
 	parse_args(&config, argc, argv);	
 
 	size_t stdpoollength = strlen(stdpool);
@@ -179,9 +179,4 @@ int main(int argc, char const *argv[]) {
 
 //    fprintf(stdout, "%s\n", out);
 	return EXIT_SUCCESS;
-}
-
-__attribute__((constructor))
-void init(void) {
-    srand((unsigned)(time(NULL) * 201906270400  + 19810710134500));
 }

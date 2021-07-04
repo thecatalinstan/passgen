@@ -8,7 +8,20 @@
 
 /* Begin PBXBuildFile section */
 		ADDC7CCA2690A5B20048078A /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = ADDC7CC42690A5B20048078A /* main.c */; };
+		ADF67C6A2691BB9F002DDFA2 /* passgen.h in Headers */ = {isa = PBXBuildFile; fileRef = ADDC7CCC2690A8750048078A /* passgen.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		ADF67C6C2691BC34002DDFA2 /* libpassgen.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = ADF67C662691B96B002DDFA2 /* libpassgen.dylib */; };
+		ADF67C6F2691BC7D002DDFA2 /* passgen.c in Sources */ = {isa = PBXBuildFile; fileRef = ADDC7CCD2690A87F0048078A /* passgen.c */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		ADF67C6D2691BC6A002DDFA2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AD30423B268DA0A400249FD1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = ADF67C652691B96B002DDFA2;
+			remoteInfo = "passgen (lib)";
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		ADDC7CB62690A5840048078A /* CopyFiles */ = {
@@ -25,10 +38,21 @@
 /* Begin PBXFileReference section */
 		ADDC7CB82690A5840048078A /* passgen */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = passgen; sourceTree = BUILT_PRODUCTS_DIR; };
 		ADDC7CC42690A5B20048078A /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		ADDC7CCC2690A8750048078A /* passgen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = passgen.h; sourceTree = "<group>"; };
+		ADDC7CCD2690A87F0048078A /* passgen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = passgen.c; sourceTree = "<group>"; };
+		ADF67C662691B96B002DDFA2 /* libpassgen.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libpassgen.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		ADDC7CB52690A5840048078A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				ADF67C6C2691BC34002DDFA2 /* libpassgen.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ADF67C642691B96B002DDFA2 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -41,8 +65,10 @@
 		AD30423A268DA0A400249FD1 = {
 			isa = PBXGroup;
 			children = (
+				ADDC7CCB2690A8750048078A /* include */,
 				ADDC7CBF2690A5B20048078A /* src */,
 				AD304244268DA0A400249FD1 /* Products */,
+				ADF67C6B2691BC34002DDFA2 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -50,6 +76,7 @@
 			isa = PBXGroup;
 			children = (
 				ADDC7CB82690A5840048078A /* passgen */,
+				ADF67C662691B96B002DDFA2 /* libpassgen.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -57,18 +84,46 @@
 		ADDC7CBF2690A5B20048078A /* src */ = {
 			isa = PBXGroup;
 			children = (
+				ADDC7CCD2690A87F0048078A /* passgen.c */,
 				ADDC7CC42690A5B20048078A /* main.c */,
 			);
 			name = src;
 			path = ../../src;
 			sourceTree = "<group>";
 		};
+		ADDC7CCB2690A8750048078A /* include */ = {
+			isa = PBXGroup;
+			children = (
+				ADDC7CCC2690A8750048078A /* passgen.h */,
+			);
+			name = include;
+			path = ../../include;
+			sourceTree = "<group>";
+		};
+		ADF67C6B2691BC34002DDFA2 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		ADF67C622691B96B002DDFA2 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				ADF67C6A2691BB9F002DDFA2 /* passgen.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
-		ADDC7CB72690A5840048078A /* passgen */ = {
+		ADDC7CB72690A5840048078A /* passgen (tool) */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = ADDC7CBC2690A5840048078A /* Build configuration list for PBXNativeTarget "passgen" */;
+			buildConfigurationList = ADDC7CBC2690A5840048078A /* Build configuration list for PBXNativeTarget "passgen (tool)" */;
 			buildPhases = (
 				ADDC7CB42690A5840048078A /* Sources */,
 				ADDC7CB52690A5840048078A /* Frameworks */,
@@ -77,11 +132,29 @@
 			buildRules = (
 			);
 			dependencies = (
+				ADF67C6E2691BC6A002DDFA2 /* PBXTargetDependency */,
 			);
-			name = passgen;
+			name = "passgen (tool)";
 			productName = passgen;
 			productReference = ADDC7CB82690A5840048078A /* passgen */;
 			productType = "com.apple.product-type.tool";
+		};
+		ADF67C652691B96B002DDFA2 /* passgen (lib) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = ADF67C692691B96B002DDFA2 /* Build configuration list for PBXNativeTarget "passgen (lib)" */;
+			buildPhases = (
+				ADF67C622691B96B002DDFA2 /* Headers */,
+				ADF67C632691B96B002DDFA2 /* Sources */,
+				ADF67C642691B96B002DDFA2 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "passgen (lib)";
+			productName = plib;
+			productReference = ADF67C662691B96B002DDFA2 /* libpassgen.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
 		};
 /* End PBXNativeTarget section */
 
@@ -92,6 +165,9 @@
 				LastUpgradeCheck = 1300;
 				TargetAttributes = {
 					ADDC7CB72690A5840048078A = {
+						CreatedOnToolsVersion = 13.0;
+					};
+					ADF67C652691B96B002DDFA2 = {
 						CreatedOnToolsVersion = 13.0;
 					};
 				};
@@ -109,7 +185,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				ADDC7CB72690A5840048078A /* passgen */,
+				ADDC7CB72690A5840048078A /* passgen (tool) */,
+				ADF67C652691B96B002DDFA2 /* passgen (lib) */,
 			);
 		};
 /* End PBXProject section */
@@ -123,7 +200,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		ADF67C632691B96B002DDFA2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				ADF67C6F2691BC7D002DDFA2 /* passgen.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		ADF67C6E2691BC6A002DDFA2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = ADF67C652691B96B002DDFA2 /* passgen (lib) */;
+			targetProxy = ADF67C6D2691BC6A002DDFA2 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		AD304248268DA0A400249FD1 /* Debug */ = {
@@ -177,7 +270,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -230,7 +323,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
@@ -241,8 +334,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				MACOSX_DEPLOYMENT_TARGET = 11.4;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				INSTALL_PATH = bin;
+				PRODUCT_NAME = passgen;
 			};
 			name = Debug;
 		};
@@ -250,8 +343,38 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				MACOSX_DEPLOYMENT_TARGET = 11.4;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				INSTALL_PATH = bin;
+				PRODUCT_NAME = passgen;
+			};
+			name = Release;
+		};
+		ADF67C672691B96B002DDFA2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				INSTALL_PATH = lib;
+				PRIVATE_HEADERS_FOLDER_PATH = include;
+				PRODUCT_NAME = passgen;
+				PUBLIC_HEADERS_FOLDER_PATH = include;
+			};
+			name = Debug;
+		};
+		ADF67C682691B96B002DDFA2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				INSTALL_PATH = lib;
+				PRIVATE_HEADERS_FOLDER_PATH = include;
+				PRODUCT_NAME = passgen;
+				PUBLIC_HEADERS_FOLDER_PATH = include;
 			};
 			name = Release;
 		};
@@ -267,11 +390,20 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		ADDC7CBC2690A5840048078A /* Build configuration list for PBXNativeTarget "passgen" */ = {
+		ADDC7CBC2690A5840048078A /* Build configuration list for PBXNativeTarget "passgen (tool)" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				ADDC7CBD2690A5840048078A /* Debug */,
 				ADDC7CBE2690A5840048078A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		ADF67C692691B96B002DDFA2 /* Build configuration list for PBXNativeTarget "passgen (lib)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				ADF67C672691B96B002DDFA2 /* Debug */,
+				ADF67C682691B96B002DDFA2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
