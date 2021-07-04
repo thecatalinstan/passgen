@@ -1,9 +1,12 @@
-# directory where the scripts will be installed
-# srptdscriptsdir = ${sysconfdir}/@PACKAGE@.d
-# initdir = ${sysconfdir}/init.d
+
+
+pkglib_LIBRARIES = libpassgen
+libpassgen_SOURCES = passgen.c
+libpassgen_LDFLAGS = -shared
 
 bin_PROGRAMS = passgen
 passgen_SOURCES = main.c
+passgen_LDADD = libpassgen.so
 
 # man5_MANS = passgen.man thesame.5
 # man3_MANS = passgen.man thesame.3
@@ -15,7 +18,7 @@ passgen_SOURCES = main.c
 
 # set the include path found by configure
 AM_CFLAGS= $(all_includes) -O0 -g
-AM_CPPFLAGS = -DSYSCONFDIR=\"$(sysconfdir)\" #-D$(GCC_PREPROCESSOR_DEFINITIONS)
+AM_CPPFLAGS = -DSYSCONFDIR=\"$(sysconfdir)\"
 
 # the library search path.
 passgen_LDFLAGS = $(all_libraries)

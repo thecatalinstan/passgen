@@ -5,13 +5,10 @@ AC_INIT([passgen],[0.1.0],[catalin.stan@me.com])
 AM_INIT_AUTOMAKE([1.9 foreign])
 
 AC_PROG_CC
-#AC_REQUIRE(AC_PROG_CC)
+AC_PROG_RANLIB
 
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile src/Makefile])
-
-#AC_CHECK_INCLUDES_DEFAULT
-#AC_PROG_EGREP
 
 #AC_CHECK_HEADERS(syslog.h)
 
