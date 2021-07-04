@@ -12,9 +12,6 @@
 
 #include "shuffle.h"
 
-#define MAX(a,b) ((a) > (b) ? (a) : (b))
-#define MIN(a,b) ((a) < (b) ? (a) : (b))
-
 size_t outlen_random(size_t count) {
     return count;
 }
